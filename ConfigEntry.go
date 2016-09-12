@@ -16,7 +16,6 @@ type ConfigEntry struct {
 
 var _configEntryCache map[string]*ConfigEntry = make(map[string]*ConfigEntry)
 var mutex sync.Mutex
-var lock = make(chan int)
 
 func _addConfigEntry(name string, major *int, minor *int, val interface{}) {
 	mutex.Lock()
