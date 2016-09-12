@@ -3,6 +3,7 @@ package xcfg
 import (
 	"fmt"
 	"strings"
+	"sync"
 	"time"
 )
 
@@ -14,8 +15,12 @@ type ConfigEntry struct {
 }
 
 var _configEntryCache map[string]*ConfigEntry = make(map[string]*ConfigEntry)
+var mutex sync.Mutex
+var lock = make(chan int)
 
 func _addConfigEntry(name string, major *int, minor *int, val interface{}) {
+	mutex.Lock()
+	defer mutex.Unlock()
 	key := strings.ToLower(name)
 	if _, ok := _configEntryCache[key]; ok {
 		ce := _configEntryCache[key]
@@ -25,7 +30,6 @@ func _addConfigEntry(name string, major *int, minor *int, val interface{}) {
 	} else {
 		_configEntryCache[key] = &ConfigEntry{name, major, minor, val}
 	}
-
 }
 
 func init() {
@@ -33,18 +37,20 @@ func init() {
 		for {
 			time.Sleep(time.Second * 10)
 			if len(_configEntryCache) > 0 {
+				fmt.Println("...ticker")
+
+				mutex.Lock()
 				rcfg := RemoteConfigSectionCollection{}
 				rcfg.Application = GetAppName()
 				rcfg.Machine = GetHostName()
 				rcfg.Sections = make([]*RemoteConfigSection, len(_configEntryCache))
-
-				fmt.Println("...ticker")
 				i := 0
 				for key, val := range _configEntryCache {
 					fmt.Println(key, *val.MajorVersion, *val.MinorVersion)
 					rcfg.Sections[i] = &RemoteConfigSection{SectionName: strings.ToLower(key), MajorVersion: *val.MajorVersion, MinorVersion: *val.MinorVersion}
 					i++
 				}
+				mutex.Unlock()
 
 				rcfg_result := GetServerVersions(rcfg)
 				if rcfg_result == nil || len(rcfg_result.Sections) == 0 {
