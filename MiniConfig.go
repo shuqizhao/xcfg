@@ -21,7 +21,7 @@ var (
 	_appCfgInstance   *MiniConfig
 	_appName          string
 	_environment      string
-	_app_cfg_name     = "app.cfg"
+	_app_cfg_name     = "app.conf"
 	_remote_cfg_url   string
 )
 
@@ -122,14 +122,26 @@ func (c *MiniConfig) Get(key string) string {
 func AppCfgInstance() *MiniConfig {
 	if _appCfgInstance == nil {
 		_appCfgInstance = new(MiniConfig)
-		_appCfgInstance.InitConfig(GetCurrentDirectory() + "/" + _app_cfg_name)
+		//支持beego
+		beego_cfg_path := GetCurrentDirectory() + "/conf/" + _app_cfg_name
+		if Exist(beego_cfg_path) {
+			_appCfgInstance.InitConfig(beego_cfg_path)
+		} else {
+			_appCfgInstance.InitConfig(GetCurrentDirectory() + "/" + _app_cfg_name)
+		}
 	}
 	return _appCfgInstance
 }
 
 func GetAppName() string {
 	if _appName == "" {
-		_appName = AppCfgInstance().Get("app_name")
+		_appName = AppCfgInstance().Read("default", "appname")
+		if _appName == "" {
+			_appName = AppCfgInstance().Get("appname")
+			if _appName == "" {
+				_appName = strings.Replace(GetCurrentDirectory(), "/", "_", 100)
+			}
+		}
 	}
 	return _appName
 }
