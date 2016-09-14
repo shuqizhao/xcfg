@@ -53,8 +53,8 @@ func GetCfgFolder() string {
 		return "/usr/local/etc/beisen.configs"
 	} else if goos == "linux" {
 		return "/usr/local/etc/beisen.configs"
-	} else if goos == "win" {
-		return "c:\beisen.configs"
+	} else if goos == "windows" {
+		return "c:/beisen.configs"
 	} else {
 		panic("未识别的操作系统：" + goos)
 	}

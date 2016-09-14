@@ -140,6 +140,7 @@ func GetAppName() string {
 			_appName = AppCfgInstance().Get("appname")
 			if _appName == "" {
 				_appName = strings.Replace(GetCurrentDirectory(), "/", "_", 100)
+				_appName = strings.Replace(_appName, ":", "_", 100)
 			}
 		}
 	}
