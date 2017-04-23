@@ -17,12 +17,13 @@ const (
 )
 
 var (
-	_currentDirectory string
-	_appCfgInstance   *MiniConfig
-	_appName          string
-	_environment      string
-	_app_cfg_name     = "app.conf"
-	_remote_cfg_url   string
+	_currentDirectory     string
+	_appCfgInstance       *MiniConfig
+	_appName              string
+	_environment          string
+	_app_cfg_name         = "app.conf"
+	_remote_cfg_url       string
+	_remote_cfg_short_url string
 )
 
 type MiniConfig struct {
@@ -175,6 +176,19 @@ func GetRemoteCfgUrl() string {
 		_remote_cfg_url = "http://" + deal_host + ":" + deal_port + "/ConfigVersionHandler.ashx"
 	}
 	return _remote_cfg_url
+}
+
+func GetRemoteCfgShortUrl() string {
+	if _remote_cfg_short_url == "" {
+		host := AppCfgInstance().Get("remote_cfg_host")
+		deal_host := strings.ToLower(strings.Trim(host, ""))
+
+		port := AppCfgInstance().Get("remote_cfg_port")
+		deal_port := strings.ToLower(strings.Trim(port, ""))
+
+		_remote_cfg_short_url = "http://" + deal_host + ":" + deal_port
+	}
+	return _remote_cfg_short_url
 }
 
 func GetHostName() string {

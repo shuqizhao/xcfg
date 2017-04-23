@@ -42,6 +42,7 @@ func init() {
 				rcfg := RemoteConfigSectionCollection{}
 				rcfg.Application = GetAppName()
 				rcfg.Machine = GetHostName()
+				rcfg.Environment = GetEnvironment()
 				rcfg.Sections = make([]*RemoteConfigSection, len(_configEntryCache))
 				i := 0
 				for key, val := range _configEntryCache {

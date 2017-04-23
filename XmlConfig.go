@@ -15,6 +15,7 @@ import (
 type RemoteConfigSectionCollection struct {
 	Machine     string                 `xml:"machine,attr"`
 	Application string                 `xml:"application,attr"`
+	Environment string                 `xml:"env,attr"`
 	Sections    []*RemoteConfigSection `xml:"section"`
 }
 
@@ -76,6 +77,7 @@ func GetRemoteConfigSectionParam(cfgName string) *RemoteConfigSection {
 	rcfg := RemoteConfigSectionCollection{}
 	rcfg.Application = GetAppName()
 	rcfg.Machine = GetHostName()
+	rcfg.Environment = GetEnvironment()
 	rcfg.Sections = make([]*RemoteConfigSection, 1)
 	rcfg.Sections[0] = &RemoteConfigSection{SectionName: strings.ToLower(cfgName), MajorVersion: 1, MinorVersion: 0}
 	rcfg_result := GetServerVersions(rcfg)
@@ -118,6 +120,10 @@ func GetServerVersions(rcfg RemoteConfigSectionCollection) *RemoteConfigSectionC
 }
 
 func DownloadRemoteCfg(sectionName string, url string, targetPath string) bool {
+	if !strings.HasPrefix(url, "http") {
+		url = GetRemoteCfgShortUrl() + "/" + url
+		//fmt.Println(url)
+	}
 	resp, err := http.Get(url)
 
 	defer func() {
