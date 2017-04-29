@@ -50,11 +50,11 @@ func GetAppCfgFolder() string {
 func GetCfgFolder() string {
 	goos := runtime.GOOS
 	if goos == "darwin" {
-		return "/usr/local/etc/beisen.configs"
+		return "/usr/local/etc/xcfg.configs"
 	} else if goos == "linux" {
-		return "/usr/local/etc/beisen.configs"
+		return "/usr/local/etc/xcfg.configs"
 	} else if goos == "windows" {
-		return "c:/beisen.configs"
+		return "c:/xcfg.configs"
 	} else {
 		panic("未识别的操作系统：" + goos)
 	}
