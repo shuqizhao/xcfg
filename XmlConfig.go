@@ -32,6 +32,7 @@ type RemoteConfigSection struct {
 	MajorVersion int    `xml:"majorVerion,attr"`
 	MinorVersion int    `xml:"minorVerion,attr"`
 	DownloadUrl  string `xml:"downloadUrl,attr"`
+	TemplateUrl  string `xml:"templateUrl,attr"`
 }
 
 func LoadLocalCfg(path string, v interface{}, major *int, minor *int) bool {
@@ -138,7 +139,9 @@ func DownloadRemoteCfg(sectionName string, url string, targetPath string) bool {
 	} else {
 		data, _ := ioutil.ReadAll(resp.Body)
 		//fmt.Println(string(data))
-
+		if len(data)==0 {
+			return false
+		}
 		tmpFile := targetPath + "." + GetGuid()
 		fs, _ := os.Create(tmpFile)
 		fs.Write(data)
@@ -201,6 +204,8 @@ func LoadCfg(entity interface{}) {
 				_addConfigEntry(cfg_name, &major, &minor, entity)
 			}
 		}
+		template_cfg_path := cfg_folder + "/" + cfg_name + ".template"
+		DownloadRemoteCfg(cfg_name, param.TemplateUrl, template_cfg_path)
 	}
 
 }

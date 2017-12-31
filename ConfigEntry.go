@@ -77,9 +77,9 @@ func init() {
 								fmt.Println(major, minor)
 								_addConfigEntry(_configEntryCache[v.SectionName].Name, &major, &minor, _configEntryCache[v.SectionName].Value)
 							}
-
 						}
-
+						template_cfg_path := cfg_folder + "/" + _configEntryCache[v.SectionName].Name + ".template"
+						DownloadRemoteCfg(v.SectionName, v.TemplateUrl, template_cfg_path)
 					}
 
 				}
