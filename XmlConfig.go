@@ -73,13 +73,13 @@ func LoadLocalCfg(path string, v interface{}, major *int, minor *int) bool {
 	return true
 }
 
-func GetRemoteConfigSectionParam(cfgName string) *RemoteConfigSection {
+func GetRemoteConfigSectionParam(cfgName string,major int,minor int) *RemoteConfigSection {
 	rcfg := RemoteConfigSectionCollection{}
 	rcfg.Application = GetAppName()
 	rcfg.Machine = GetHostName()
 	rcfg.Environment = GetEnvironment()
 	rcfg.Sections = make([]*RemoteConfigSection, 1)
-	rcfg.Sections[0] = &RemoteConfigSection{SectionName: strings.ToLower(cfgName), MajorVersion: 1, MinorVersion: 0}
+	rcfg.Sections[0] = &RemoteConfigSection{SectionName: strings.ToLower(cfgName), MajorVersion: major, MinorVersion: minor}
 	rcfg_result := GetServerVersions(rcfg)
 	if rcfg_result == nil || len(rcfg_result.Sections) == 0 {
 		return nil
@@ -184,11 +184,14 @@ func LoadCfg(entity interface{}) {
 	is_loaded := LoadLocalCfg(cfg_path, entity, &major, &minor)
 	if is_loaded {
 		fmt.Println(major, minor)
-		_addConfigEntry(cfg_name, &major, &minor, entity)
-		return
+		if isFirstLoad(cfg_name){
+			_addConfigEntry(cfg_name, &major, &minor, entity)
+		}else {
+			_addConfigEntry(cfg_name, &major, &minor, entity)
+			return
+		}
 	}
-
-	param := GetRemoteConfigSectionParam(cfg_name)
+	param := GetRemoteConfigSectionParam(cfg_name,major,minor)
 	if param != nil {
 		//fmt.Println(param.DownloadUrl)
 		sucess := DownloadRemoteCfg(cfg_name, param.DownloadUrl, cfg_path)

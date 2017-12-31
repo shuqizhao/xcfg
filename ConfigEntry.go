@@ -15,6 +15,7 @@ type ConfigEntry struct {
 }
 
 var _configEntryCache map[string]*ConfigEntry = make(map[string]*ConfigEntry)
+var _configEntryFistLoad map[string]bool = make(map[string]bool)
 var mutex sync.Mutex
 
 func _addConfigEntry(name string, major *int, minor *int, val interface{}) {
@@ -28,6 +29,15 @@ func _addConfigEntry(name string, major *int, minor *int, val interface{}) {
 		ce.Value = val
 	} else {
 		_configEntryCache[key] = &ConfigEntry{name, major, minor, val}
+	}
+}
+
+func isFirstLoad(name string) bool {
+	key := strings.ToLower(name)
+	if _, ok := _configEntryCache[key]; ok {
+		return false
+	}else{
+		return true
 	}
 }
 
