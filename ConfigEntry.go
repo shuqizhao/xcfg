@@ -15,7 +15,6 @@ type ConfigEntry struct {
 }
 
 var _configEntryCache map[string]*ConfigEntry = make(map[string]*ConfigEntry)
-var _configEntryFistLoad map[string]bool = make(map[string]bool)
 var mutex sync.Mutex
 
 func _addConfigEntry(name string, major *int, minor *int, val interface{}) {
